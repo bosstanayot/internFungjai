@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMusicList(){
+        loadingDialog = ProgressDialog.show(MainActivity.this, "Download Data", "Loading...", true, false);
         OkHttpClient client = new OkHttpClient.Builder().build();
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -47,14 +48,13 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<MusicList>>() {
             @Override
             public void onResponse(Call<List<MusicList>> call, Response<List<MusicList>> response) {
-                loadingDialog = ProgressDialog.show(MainActivity.this, "Download Data", "Loading...", true, false);
                 if(response.isSuccessful()){
-                    loadingDialog.dismiss();
                     List<MusicList> musicList = response.body();
                     ListAdapter listAdapter = new ListAdapter(getApplicationContext(), musicList);
                     RecyclerView recyclerView = findViewById(R.id.data_list);
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     recyclerView.setAdapter(listAdapter);
+                    loadingDialog.dismiss();
                 }
 
             }
